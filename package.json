@@ -1,0 +1,85 @@
+{
+  "name": "shiji-workbench",
+  "private": true,
+  "version": "0.2.27",
+  "type": "module",
+  "main": "dist-electron/electron/main.js",
+  "scripts": {
+    "dev": "npm run build:electron && concurrently -k \"vite\" \"tsc -p electron/tsconfig.json --watch --preserveWatchOutput\" \"wait-on http://localhost:5173 && node scripts/dev-electron.mjs\"",
+    "dev:mock": "npm run build:electron && concurrently -k \"vite\" \"tsc -p electron/tsconfig.json --watch --preserveWatchOutput\" \"wait-on http://localhost:5173 && node scripts/dev-electron.mjs --mock\"",
+    "build:electron": "tsc -p electron/tsconfig.json && node scripts/copy-dsh-plugins.mjs",
+    "build": "tsc -b && vite build && tsc -p electron/tsconfig.json",
+    "typecheck": "tsc -b --pretty false",
+    "test": "vitest run",
+    "dist:win": "npm run dist:editions",
+    "dist:win:dir": "npm run build && npm run build:electron && electron-builder --win --dir",
+    "dist:editions": "node scripts/build-editions.mjs",
+    "verify:real": "electron scripts/e2e-real-timeline.mjs",
+    "verify:real:radar": "npm run build:electron && electron scripts/e2e-real-radar.mjs",
+    "verify:real:search-matrix": "npm run build:electron && electron scripts/e2e-real-search-matrix.mjs"
+  },
+  "dependencies": {
+    "cheerio": "1.0.0",
+    "unpdf": "1.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "6.1.1",
+    "@xyflow/react": "12.11.6",
+    "concurrently": "10.0.5",
+    "electron": "44.2.0",
+    "electron-builder": "26.15.3",
+    "lucide-react": "1.41.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "typescript": "7.0.2",
+    "vite": "8.2.2",
+    "vitest": "5.0.0",
+    "wait-on": "9.1.0"
+  },
+  "build": {
+    "appId": "com.shiji.workbench",
+    "productName": "识机",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "package.json",
+      "!**/*.map",
+      "!**/*.ts",
+      "!**/*.tsx",
+      "!**/*.jsx"
+    ],
+    "electronFuses": {
+      "runAsNode": true,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true,
+      "grantFileProtocolExtraPrivileges": true
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Shiji-Setup-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

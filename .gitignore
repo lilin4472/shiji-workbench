@@ -1,0 +1,14 @@
+node_modules/
+dist/
+dist-electron/
+dist-trial/
+release/
+artifacts/
+*.log
+*.tsbuildinfo
+.DS_Store
+.env
+.env.*
+!.env.example
+*.exe
+*.blockmap

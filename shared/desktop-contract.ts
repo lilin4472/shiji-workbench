@@ -1,0 +1,1 @@
+export const DESKTOP_CONTRACT_VERSION = 21
